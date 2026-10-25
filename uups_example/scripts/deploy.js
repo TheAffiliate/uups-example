@@ -1,14 +1,20 @@
-const { ethers } = require('hardhat');
+const { ethers, upgrades } = require('hardhat');
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
-  console.log('Deploying from:', deployer.address);
+  const [admin] = await ethers.getSigners();
+  console.log('Deploying from:', admin.address);
 
   const MyContract = await ethers.getContractFactory('MyContract');
-  const contract = await MyContract.deploy();
-  await contract.waitForDeployment();
+  const proxy = await upgrades.deployProxy(MyContract, [42], {
+    initializer: 'initialize',
+    kind: 'uups',
+  });
 
-  console.log('MyContract deployed to:', await contract.getAddress());
+  await proxy.waitForDeployment();
+
+  const proxyAddress = await proxy.getAddress();
+  console.log('Proxy address: ', proxyAddress);
+  console.log('Current implementation address: ', await upgrades.erc1967.getImplementationAddress(proxyAddress));
 }
 
 main().catch((err) => {

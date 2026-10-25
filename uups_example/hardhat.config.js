@@ -2,6 +2,10 @@ require("@nomicfoundation/hardhat-toolbox");
 require("@openzeppelin/hardhat-upgrades");
 require("dotenv").config();
 
+const rawKey = process.env.PRIVATE_KEY || "";
+const PRIVATE_KEY = rawKey.startsWith("0x") ? rawKey : `0x${rawKey}`;
+const hasValidKey = /^0x[0-9a-fA-F]{64}$/.test(PRIVATE_KEY);
+
 module.exports = {
   solidity: {
     compilers: [
@@ -21,7 +25,7 @@ module.exports = {
     hardhat: {},
     sepolia: {
       url: process.env.SEPOLIA_RPC_URL || "",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : []
+      accounts: hasValidKey ? [PRIVATE_KEY] : []
     }
   },
   etherscan: {
