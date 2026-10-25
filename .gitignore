@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Secrets: never commit these
+.env
+.env.*
+!.env.example
+
+# Hardhat build output
+artifacts/
+cache/
+typechain-types/
+coverage/
+coverage.json
+
+# OpenZeppelin upgrades: local test networks only
+**/.openzeppelin/unknown-*.json
+
+# OS / editor
+.DS_Store
+Thumbs.db
